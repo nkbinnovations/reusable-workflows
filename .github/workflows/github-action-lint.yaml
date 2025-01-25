@@ -10,6 +10,15 @@ on:
       - opened
       - reopened
       - edited
+  workflow_call:
+    inputs:
+      labeler_config:
+        description: 'Path to the labeler configuration file'
+        required: true
+        default: '.github/labeler.yml'
+        type: string
+env:
+  LABELER_CONFIG: ${{ github.head_ref && 'https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.github/labeler.yml' || github.event.inputs.labeler_config }}
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
@@ -27,4 +36,4 @@ jobs:
       - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: .github/labeler.yml
+          configuration-path: ${{ env.LABELER_CONFIG }}
