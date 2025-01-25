@@ -34,9 +34,10 @@ jobs:
         with:
           fetch-depth: 1
       - name: Download labeler configuration
-        if: ${{ github.event_name == 'pull_request' }}
         run: |
-          curl -sSL -o ${{ env.LABELER_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/${{ env.LABELER_CONFIG }}
+          if [ ! -f "${{ env.LABELER_CONFIG }}" ]; then
+            curl -sSL -o ${{ env.LABELER_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/${{ env.LABELER_CONFIG }}
+          fi
       - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
