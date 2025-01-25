@@ -14,7 +14,7 @@ on:
     inputs:
       labeler_config:
         description: 'Path to the labeler configuration file'
-        required: true
+        required: false
         default: '.github/labeler.yml'
         type: string
 env:
