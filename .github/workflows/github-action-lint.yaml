@@ -15,7 +15,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 jobs:
-  labeler:
+  github-action-lint:
     permissions:
       contents: read
       pull-requests: write
@@ -30,4 +30,4 @@ jobs:
           bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash) latest /usr/local/bin
       - name: Lint action files
         run: |-
-          actionlint ${{ github.workspace }}
+          actionlint
