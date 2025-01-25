@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 1
       - name: Download actionlint binaries
         run: |-
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash) latest /usr/bin
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash) latest /usr/local/bin
       - name: Lint action files
         run: |-
           actionlint ${{ github.workspace }}
