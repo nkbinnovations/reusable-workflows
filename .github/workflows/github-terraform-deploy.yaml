@@ -1,11 +1,9 @@
 ---
-name: github-terraform-lint
+name: github-terraform-deploy
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
     types:
-      - unlabeled
-      - labeled
       - synchronize
       - opened
       - reopened
@@ -22,14 +20,20 @@ on:
         required: false
         default: '.'
         type: string
+      terraform_action:
+        description: 'Terraform action to perform'
+        required: false
+        default: 'plan'
+        type: string
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   TERRAFORM_VERSION: ${{ github.event.inputs.terraform_version || 'latest' }}
   TERRAFORM_DIRECTORY: ${{ github.event.inputs.terraform_directory || '.' }}
+  TERRAFORM_ACTION: ${{ github.event.inputs.terraform_action || 'plan' }}
 jobs:
-  github-terraform-lint:
+  github-terraform-deploy:
     permissions:
       contents: read
       pull-requests: write
@@ -55,9 +59,15 @@ jobs:
         run: |-
           cd "${{ env.TERRAFORM_DIRECTORY }}"
           terraform validate -no-color -json
-      - name: Terraform fmt
+      - name: Terraform Fmt
         id: fmt
         if: steps.validate.outcome == 'success'
         run: |-
           terraform fmt -diff -write=true -check=true -recursive "${{ env.TERRAFORM_DIRECTORY }}"
         continue-on-error: true
+      - name: Terraform ${{ env.TERRAFORM_ACTION }} action
+        id: action
+        if: steps.fmt.outcome == 'success'
+        run: |-
+          cd "${{ env.TERRAFORM_DIRECTORY }}"
+          terraform ${{ env.TERRAFORM_ACTION }} -auto-approve -no-color

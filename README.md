@@ -8,6 +8,7 @@
 [![github-terraform-lint](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-lint.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-lint.yaml)
 [![github-labeler](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-labeler.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-labeler.yaml)
 [![github-yaml-lint](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml)
+[![github-terraform-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml)
 
 ## Workflows
 
@@ -95,7 +96,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **terraform_directory:** *(optional)*
 
-    Relative Terraform folder path of the ansible configuration folders in the user repository`default('.')`
+    Relative Terraform folder path of the configuration files in the user repository`default('.')`
 
   example
   ```YAML
@@ -189,5 +190,35 @@ This repository contains several GitHub Actions workflows for linting and other 
       uses: nkbinnovations/reusable-workflows/.github/workflows/github-pre-commit-checks.yaml@v1 # best to use the SHA instead of tags for immutable code.
       with:
         python_version: '3.12.0'
+  ```
+</details>
+
+<details>
+<summary><b>github-terraform-deploy</b></summary>
+
+   Runs the Lint on the packer configurations to verify the syntax in the user repository
+
+  **INPUTS**
+
+  - **terraform_version:** *(optional)*
+
+    The Terraform version to use for validating the configurations in the user repository. `default('latest')`
+
+  - **terraform_directory:** *(optional)*
+
+    Relative Terraform folder path of the configuration folders in the user repository`default('.')`
+
+  - **terraform_action:** *(optional)*
+
+    The Terraform action to apply on the terraform configuration files in the user repository`default('plan')`
+
+  example
+  ```YAML
+    github-terraform-deploy:
+      name: terraform-lint
+      uses: nkbinnovations/reusable-workflows/.github/workflows/github-terraform-deploy.yaml@v1 # best to use the SHA instead of tags for immutable code.
+      with:
+        terraform_version: '1.10.3'
+        terraform_action: 'plan'
   ```
 </details>
