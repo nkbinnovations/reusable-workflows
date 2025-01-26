@@ -1,0 +1,44 @@
+---
+name: pull-request-labeler
+run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
+on:
+  pull_request:
+    types:
+      - unlabeled
+      - labeled
+      - synchronize
+      - opened
+      - reopened
+      - edited
+  workflow_call:
+    inputs:
+      labeler_config:
+        description: 'Path to the labeler configuration file'
+        required: false
+        default: '.github/labeler.yml'
+        type: string
+env:
+  LABELER_CONFIG: ${{ github.event.inputs.labeler_config || '.github/labeler.yml' }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
+  cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
+jobs:
+  labeler:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 1
+      - name: Download labeler configuration
+        run: |
+          if [ ! -f "${{ env.LABELER_CONFIG }}" ]; then
+            curl -sSL -o ${{ env.LABELER_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/${{ env.LABELER_CONFIG }}
+          fi
+      - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: ${{ env.LABELER_CONFIG }}

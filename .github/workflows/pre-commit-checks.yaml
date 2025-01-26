@@ -12,15 +12,18 @@ on:
     inputs:
       python_version:
         description: 'Python version to use'
-        required: true
+        required: false
         default: '3.13.0'
         type: string
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
+  cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   PYTHON_VERSION: ${{ github.head_ref && '3.13.0' || github.event.inputs.python_version }}
 permissions:
   contents: read
 jobs:
-  pre-commit:
+  pre-commit-checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,7 +31,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
         with:
-          python-version: '3.13.0'
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install python dependencies
         run: |-
           if [ -f requirements.txt ]; then

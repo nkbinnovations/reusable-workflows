@@ -1,5 +1,5 @@
 ---
-name: pull-request-labeler
+name: github-action-lint
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
@@ -10,11 +10,12 @@ on:
       - opened
       - reopened
       - edited
+  workflow_call:
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 jobs:
-  labeler:
+  github-action-lint:
     permissions:
       contents: read
       pull-requests: write
@@ -24,7 +25,9 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           fetch-depth: 1
-      - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: .github/labeler.yml
+      - name: Download actionlint binaries
+        run: |-
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash) latest /usr/local/bin
+      - name: Lint action files
+        run: |-
+          actionlint
