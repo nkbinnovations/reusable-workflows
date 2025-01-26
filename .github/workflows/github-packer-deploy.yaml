@@ -74,14 +74,16 @@ jobs:
         if: steps.fmt.outcome == 'success' && ( env.PACKER_ACTION == 'inspect' || env.PACKER_ACTION == 'build' )
         run: |-
           cd "${{ env.PACKER_DIRECTORY }}"
-          extra_vars='';
+          extra_vars="";
           if [[ -d "pkrvars" ]]; then
             for var_file in pkrvars/${{ env.PACKER_ENVIRONMENT }}*.pkrvars.hcl; do
+              [ -e "$var_file" ] || continue
               extra_vars="${extra_vars} -var-file=${var_file} ";
             done
           else
             for var_file in ${{ env.PACKER_ENVIRONMENT }}*.pkrvars.hcl; do
+              [ -e "$var_file" ] || continue
               extra_vars="${extra_vars} -var-file=${var_file} ";
             done
           fi
-          packer ${{ env.PACKER_ACTION }} "${extra_vars}";
+          packer "${{ env.PACKER_ACTION }} ${extra_vars}";

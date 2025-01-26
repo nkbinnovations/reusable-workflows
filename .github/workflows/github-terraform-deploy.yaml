@@ -79,11 +79,13 @@ jobs:
           extra_vars='';
           if [[ -d "tfvars" ]]; then
             for var_file in tfvars/${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars; do
-              extra_vars="${extra_vars} -var-file=${var_file} ";
+              [ -e "$var_file" ] || continue
+              extra_vars="${extra_vars} -var-file=${var_file}";
             done
           else
             for var_file in ${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars; do
-              extra_vars="${extra_vars} -var-file=${var_file} ";
+              [ -e "$var_file" ] || continue
+              extra_vars="${extra_vars} -var-file=${var_file}";
             done
           fi
           if [[ "${{ env.TERRAFORM_ACTION }}" == "plan" ]]; then
