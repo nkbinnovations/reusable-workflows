@@ -1,5 +1,5 @@
 ---
-name: github-action-lint
+name: github-python-lint
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
@@ -23,7 +23,7 @@ concurrency:
 env:
   PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.13.0' }}
 jobs:
-  github-action-lint:
+  github-python-lint:
     permissions:
       contents: read
       pull-requests: write
