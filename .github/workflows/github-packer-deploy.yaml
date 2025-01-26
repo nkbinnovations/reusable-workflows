@@ -53,7 +53,7 @@ jobs:
         id: setup
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232  # v3
         with:
-          packer_version: "${{ env.PACKER_VERSION }}"
+          version: "${{ env.PACKER_VERSION }}"
       - name: Packer Init
         id: init
         run: |-
