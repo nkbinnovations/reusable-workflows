@@ -82,4 +82,5 @@ jobs:
           else
             extra_vars="${extra_vars} ;"
           fi
+          echo "Extra vars: ${extra_vars}"
           terraform ${{ env.TERRAFORM_ACTION }} "${extra_vars}"
