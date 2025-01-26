@@ -63,4 +63,3 @@ jobs:
           setup_python: "true"
           working_directory: "${{ env.ANSIBLE_DIRECTORY }}"
           requirements_file: "${{ env.ANSIBLE_REQUIREMENTS_FILE }}"
-          config_file: "${{ env.ANSIBLE_LINT_CONFIG }}"
