@@ -64,7 +64,7 @@ jobs:
         if: steps.init.outcome == 'success'
         run: |-
           cd "${{ env.TERRAFORM_DIRECTORY }}"
-          terraform validate -no-color -json
+          terraform validate -json
       - name: Terraform Fmt
         id: fmt
         if: steps.validate.outcome == 'success'
@@ -87,7 +87,7 @@ jobs:
             done
           fi
           if [[ "${{ env.TERRAFORM_ACTION }}" == "plan" ]]; then
-            terraform ${{ env.TERRAFORM_ACTION }} -no-color "${extra_vars}";
+            terraform ${{ env.TERRAFORM_ACTION }} "${extra_vars}";
           else
-            terraform ${{ env.TERRAFORM_ACTION }} -auto-approve -no-color "${extra_vars}";
+            terraform ${{ env.TERRAFORM_ACTION }} -auto-approve "${extra_vars}";
           fi

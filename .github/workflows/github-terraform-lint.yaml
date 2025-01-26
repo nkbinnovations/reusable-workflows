@@ -54,7 +54,7 @@ jobs:
         if: steps.init.outcome == 'success'
         run: |-
           cd "${{ env.TERRAFORM_DIRECTORY }}"
-          terraform validate -no-color -json
+          terraform validate -json
       - name: Terraform fmt
         id: fmt
         if: steps.validate.outcome == 'success'
