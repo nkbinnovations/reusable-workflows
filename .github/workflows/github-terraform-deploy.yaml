@@ -77,10 +77,11 @@ jobs:
         run: |-
           cd "${{ env.TERRAFORM_DIRECTORY }}"
           extra_vars=$(find "${{ env.TERRAFORM_DIRECTORY }}" -name "${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars" -exec printf " -var-file={} " \;)
+          if [[ -n "${extra_vars}" ]]; then
+            extra_vars=""
+          fi
           if [[ "${{ env.TERRAFORM_ACTION }}" == "apply" ]]; then
-            extra_vars="${extra_vars} -auto-approve ;"
-          else
-            extra_vars="${extra_vars} ;"
+            extra_vars="${extra_vars} -auto-approve"
           fi
           echo "Extra vars: ${extra_vars}"
           terraform ${{ env.TERRAFORM_ACTION }} "${extra_vars}"
