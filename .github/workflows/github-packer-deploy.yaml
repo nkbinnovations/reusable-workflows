@@ -86,4 +86,4 @@ jobs:
               extra_vars="${extra_vars} -var-file=${var_file} ";
             done
           fi
-          packer "${{ env.PACKER_ACTION }} ${extra_vars}";
+          packer "${{ env.PACKER_ACTION }}" "${extra_vars}";
