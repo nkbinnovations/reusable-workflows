@@ -1,5 +1,5 @@
 ---
-name: pre-commit-checks
+name: github-pre-commit-checks
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
@@ -23,7 +23,7 @@ env:
 permissions:
   contents: read
 jobs:
-  pre-commit-checks:
+  github-pre-commit-checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -42,13 +42,13 @@ jobs:
       - name: Download Pre-Commit Config
         run: |-
           if [ ! -f .pre-commit-config.yaml ]; then
-            curl -sSL -o .pre-commit-config.yaml https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.pre-commit-config.yaml;
+            curl -sSL -o .pre-commit-config.yaml https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/.pre-commit-config.yaml;
           fi
           if [ ! -f .yamlfmt ]; then
-            curl -sSL -o .yamlfmt https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.yamlfmt;
+            curl -sSL -o .yamlfmt https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/.yamlfmt;
           fi
           if [ ! -f .yamllint ]; then
-            curl -sSL -o .yamllint https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.yamllint;
+            curl -sSL -o .yamllint https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/.yamllint;
           fi
       - name: Run pre-commit
         run: |-

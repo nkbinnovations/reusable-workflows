@@ -12,11 +12,6 @@ on:
       - edited
   workflow_call:
     inputs:
-      ansible_lint_version:
-        description: 'ansible lint version to use'
-        required: false
-        default: 'latest'
-        type: string
       ansible_requirements_file:
         description: 'ansible requirements file for role and collection dependencies'
         required: false
@@ -37,7 +32,6 @@ concurrency:
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
-  ANSIBLE_LINT_VERSION: ${{ github.event.inputs.ansible_lint_version || 'latest' }}
   ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || '' }}
   ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || '.' }}
 jobs:
@@ -55,7 +49,7 @@ jobs:
         id: ansible-lint-config
         run: |-
           if [ ! -f "${{ env.ANSIBLE_LINT_CONFIG }}" ]; then
-            curl -sSL -o ${{ env.ANSIBLE_LINT_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/${{ env.ANSIBLE_LINT_CONFIG }}
+            curl -sSL -o ${{ env.ANSIBLE_LINT_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/${{ env.ANSIBLE_LINT_CONFIG }}
           fi
       - name: Run ansible-lint
         uses: ansible/ansible-lint@e918e02374cc9148abfe6d0fa04417ee89f0def9  # v25
