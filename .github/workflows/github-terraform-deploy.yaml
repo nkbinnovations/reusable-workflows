@@ -76,7 +76,8 @@ jobs:
         if: steps.fmt.outcome == 'success' && ( env.TERRAFORM_ACTION == 'plan' || env.TERRAFORM_ACTION == 'apply' )
         run: |-
           cd "${{ env.TERRAFORM_DIRECTORY }}"
-          extra_vars=$(find ${{ env.TERRAFORM_DIRECTORY }} -name "${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars" -exec printf " -var-file=%s" {} + 2>/dev/null || find . -name "${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars" -exec printf " -var-file=%s" {} +)
+          extra_vars=$(find "${{ env.TERRAFORM_DIRECTORY }}" -name "${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars" -exec printf " -var-file={} " \;)
+          echo "Extra vars: ${extra_vars}"
           if [[ "${{ env.TERRAFORM_ACTION }}" == "plan" ]]; then
             terraform "${{ env.TERRAFORM_ACTION }}" "${extra_vars}"
           else
