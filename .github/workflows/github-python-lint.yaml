@@ -1,11 +1,13 @@
 ---
-name: pre-commit-checks
+name: github-python-lint
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
     types:
-      - opened
+      - unlabeled
+      - labeled
       - synchronize
+      - opened
       - reopened
       - edited
   workflow_call:
@@ -19,26 +21,30 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
-  PYTHON_VERSION: ${{ github.head_ref && '3.13.0' || github.event.inputs.python_version }}
-permissions:
-  contents: read
+  PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.13.0' }}
 jobs:
-  pre-commit-checks:
+  github-python-lint:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+        with:
+          fetch-depth: 1
       - name: Set up Python
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install python dependencies
+      - name: Install dependencies
         run: |-
           if [ -f requirements.txt ]; then
             python -m pip install -r requirements.txt
           else
             python -m pip install pre-commit
           fi
-      - name: Run pre-commit
+          pip install flake8
+      - name: Lint Python files
         run: |-
-          pre-commit run --all-files --verbose
+          flake8 .

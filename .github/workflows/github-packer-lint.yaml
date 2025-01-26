@@ -1,0 +1,56 @@
+---
+name: github-packer-lint
+run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
+on:
+  pull_request:
+    types:
+      - unlabeled
+      - labeled
+      - synchronize
+      - opened
+      - reopened
+      - edited
+  workflow_call:
+    inputs:
+      packer_version:
+        description: 'packer version to use'
+        required: false
+        default: 'latest'
+        type: string
+      packer_directory:
+        description: 'packer files to lint'
+        required: false
+        default: '.'
+        type: string
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
+  cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
+jobs:
+  github-packer-lint:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+        with:
+          fetch-depth: 1
+      - name: Set up packer
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232  # v3
+        id: setup
+        with:
+          packer_version: "${{ github.event.inputs.packer_version || 'latest' }}"
+      - name: packer Init
+        id: init
+        run: |-
+          packer init -upgrade "${{ github.event.inputs.packer_directory || '.' }}"
+      - name: packer Validate
+        id: validate
+        run: |-
+          packer validate -syntax-only "${{ github.event.inputs.packer_directory || '.' }}"
+      - name: packer fmt
+        id: fmt
+        run: |-
+          packer fmt -diff -write=true -recursive "${{ github.event.inputs.packer_directory || '.' }}"
+        continue-on-error: true
