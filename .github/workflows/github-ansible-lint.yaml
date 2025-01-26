@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
         with:
           fetch-depth: 1
       - name: Ansible Lint Config Setup
@@ -58,7 +58,7 @@ jobs:
             curl -sSL -o ${{ env.ANSIBLE_LINT_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/${{ env.ANSIBLE_LINT_CONFIG }}
           fi
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@e918e02374cc9148abfe6d0fa04417ee89f0def9 # v25
+        uses: ansible/ansible-lint@e918e02374cc9148abfe6d0fa04417ee89f0def9  # v25
         with:
           setup_python: "true"
           working_directory: "${{ env.ANSIBLE_DIRECTORY }}"
