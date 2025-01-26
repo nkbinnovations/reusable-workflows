@@ -158,7 +158,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **labeler_config:** *(optional)*
 
-    The Pull Request Label rules config file for creating relevant labels for the PR in the user repository. `default('`[.github/labeler.yml](https://github.com/nkbinnovations/reusable-workflows/blob/feature-enable-pylint/.github/labeler.yml)'`)`
+    The Pull Request Label rules config file for creating relevant labels for the PR in the user repository. `default('`[.github/labeler.yml](https://github.com/nkbinnovations/reusable-workflows/blob/main/.github/labeler.yml)'`)`
 
   example
   ```YAML
