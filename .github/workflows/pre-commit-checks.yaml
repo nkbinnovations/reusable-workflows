@@ -47,8 +47,8 @@ jobs:
           if [ ! -f .yamlfmt ]; then
             curl -sSL -o .yamlfmt https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.yamlfmt;
           fi
-          if [ ! -f .yamllint.yaml ]; then
-            curl -sSL -o .yamllint.yaml https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.yamllint.yaml;
+          if [ ! -f .yamllint ]; then
+            curl -sSL -o .yamllint https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.yamllint;
           fi
       - name: Run pre-commit
         run: |-

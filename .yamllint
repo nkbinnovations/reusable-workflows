@@ -3,6 +3,11 @@ yaml-files:
   - "*.yaml"
   - "*.yml"
   - ".yamllint"
+ignore:
+  - '.github/workflows/*.yaml'
+  - '.github/workflows/*.yml'
+  - '.github/*.yaml'
+  - '.github/*.yml'
 rules:
   anchors: enable
   braces:

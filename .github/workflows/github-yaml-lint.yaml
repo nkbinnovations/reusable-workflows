@@ -1,0 +1,46 @@
+---
+name: github-yaml-lint
+run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
+on:
+  pull_request:
+    types:
+      - unlabeled
+      - labeled
+      - synchronize
+      - opened
+      - reopened
+      - edited
+  workflow_call:
+    inputs:
+      yamllint_config:
+        description: 'yamllint config file'
+        required: false
+        default: '.yamllint'
+        type: string
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
+  cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
+env:
+  PYTHON_VERSION: '3.13.0'
+  YAML_LINT_CONFIG: ${{ github.event.inputs.yamllint_config || '.yamllint' }}
+jobs:
+  github-yaml-lint:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+        with:
+          fetch-depth: 1
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up yamllint
+        run: |-
+          pip install yamllint
+      - name: Lint yaml files
+        run: |-
+          yamllint -c "${{ env.YAML_LINT_CONFIG }}" .
