@@ -11,17 +11,17 @@ on:
   workflow_call:
     inputs:
       packer_version:
-        description: 'Terraform version to use'
+        description: 'Packer version to use'
         required: false
         default: 'latest'
         type: string
       packer_directory:
-        description: 'Terraform files directory to lint'
+        description: 'Packer files directory to lint'
         required: false
         default: '.'
         type: string
       packer_action:
-        description: 'Terraform action to perform'
+        description: 'Packer action to perform'
         required: false
         default: 'plan'
         type: string
@@ -43,31 +43,31 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
         with:
           fetch-depth: 1
-      - name: Set up Terraform
+      - name: Set up Packer
         id: setup
         uses: hashicorp/setup-packer@b9cd54a3c349d3f38e8881555d616ced269862dd  # v3
         with:
           packer_version: "${{ env.PACKER_VERSION }}"
-      - name: Terraform Init
+      - name: Packer Init
         id: init
         run: |-
           cd "${{ env.PACKER_DIRECTORY }}"
           packer init -upgrade -no-color
-      - name: Terraform Validate
+      - name: Packer Validate
         id: validate
         if: steps.init.outcome == 'success'
         run: |-
           cd "${{ env.PACKER_DIRECTORY }}"
           packer validate -no-color -json
-      - name: Terraform Fmt
+      - name: Packer Fmt
         id: fmt
         if: steps.validate.outcome == 'success'
         run: |-
           packer fmt -diff -write=true -check=true -recursive "${{ env.PACKER_DIRECTORY }}"
         continue-on-error: true
-      - name: Terraform ${{ env.PACKER_ACTION }} action
+      - name: Packer ${{ env.PACKER_ACTION }} action
         id: action
         if: steps.fmt.outcome == 'success'
         run: |-
           cd "${{ env.PACKER_DIRECTORY }}"
-          packer ${{ env.PACKER_ACTION }} -auto-approve -no-color
+          packer "${{ env.PACKER_ACTION }}" -no-color -json
