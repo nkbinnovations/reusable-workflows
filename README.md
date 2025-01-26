@@ -9,6 +9,7 @@
 [![github-labeler](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-labeler.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-labeler.yaml)
 [![github-yaml-lint](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml)
 [![github-terraform-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml)
+[![github-packer-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml)
 
 ## Workflows
 
@@ -204,6 +205,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
     The Terraform Environment to apply/plan the configurations in the user repository.
 
+    **Note:**
       - The Variables should be either created directly or under "tfvars" directory of the Terraform directory Variable.
 
     **Ex:**
