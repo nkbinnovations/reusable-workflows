@@ -1,11 +1,13 @@
 ---
-name: pre-commit-checks
+name: github-action-lint
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
     types:
-      - opened
+      - unlabeled
+      - labeled
       - synchronize
+      - opened
       - reopened
       - edited
   workflow_call:
@@ -20,36 +22,29 @@ concurrency:
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.13.0' }}
-permissions:
-  contents: read
 jobs:
-  pre-commit-checks:
+  github-action-lint:
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 1
       - name: Set up Python
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install python dependencies
+      - name: Install dependencies
         run: |-
           if [ -f requirements.txt ]; then
             python -m pip install -r requirements.txt
           else
             python -m pip install pre-commit
           fi
-      - name: Download Pre-Commit Config
+          pip install flake8
+      - name: Lint Python files
         run: |-
-          if [ ! -f .pre-commit-config.yaml ]; then
-            curl -sSL -o .pre-commit-config.yaml https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.pre-commit-config.yaml;
-          fi
-          if [ ! -f .yamlfmt ]; then
-            curl -sSL -o .yamlfmt https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.yamlfmt;
-          fi
-          if [ ! -f .yamllint.yaml ]; then
-            curl -sSL -o .yamllint.yaml https://raw.githubusercontent.com/nkbinnovations/reusable-lint-workflows/refs/heads/main/.yamllint.yaml;
-          fi
-      - name: Run pre-commit
-        run: |-
-          pre-commit run --all-files --verbose
+          flake8 .
