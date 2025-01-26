@@ -1,0 +1,60 @@
+---
+name: github-terraform-lint
+run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
+on:
+  pull_request:
+    types:
+      - unlabeled
+      - labeled
+      - synchronize
+      - opened
+      - reopened
+      - edited
+  workflow_call:
+    inputs:
+      terraform_version:
+        description: 'Terraform version to use'
+        required: false
+        default: 'latest'
+        type: string
+      terraform_directory:
+        description: 'Terraform files directory to lint'
+        required: false
+        default: '.'
+        type: string
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
+  cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
+jobs:
+  github-terraform-lint:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-depth: 1
+      - name: Set up Terraform
+        id: setup
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
+        with:
+          terraform_version: "${{ github.event.inputs.terraform_version || 'latest' }}"
+      - name: Terraform Init
+        id: init
+        run: |-
+          cd "${{ github.event.inputs.terraform_directory || '.' }}"
+          terraform init -upgrade -no-color
+      - name: Terraform Validate
+        id: validate
+        if: steps.init.outcome == 'success'
+        run: |-
+          cd "${{ github.event.inputs.terraform_directory || '.' }}"
+          terraform validate -no-color -json
+      - name: Terraform fmt
+        id: fmt
+        if: steps.validate.outcome == 'success'
+        run: |-
+          terraform fmt -diff -write=true -check=true -recursive "${{ github.event.inputs.terraform_directory || '.' }}"
+        continue-on-error: true
