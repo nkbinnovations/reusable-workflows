@@ -37,7 +37,7 @@ env:
   PACKER_VERSION: ${{ github.event.inputs.packer_version || 'latest' }}
   PACKER_DIRECTORY: ${{ github.event.inputs.packer_directory || '.' }}
   PACKER_ACTION: ${{ github.event.inputs.packer_action || 'plan' }}
-  PACKER_ENVIRONMENT: ${{ github.event.inputs.packer_environment }}
+  PACKER_ENVIRONMENT: ${{ github.event.inputs.packer_environment || 'dev'}}
 jobs:
   github-packer-deploy:
     permissions:
