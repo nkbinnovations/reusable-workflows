@@ -12,7 +12,8 @@ on:
     inputs:
       packer_environment:
         description: 'Packer Environment to use and load the variable files'
-        required: true
+        required: false
+        default: 'dev'
         type: string
       packer_version:
         description: 'Packer version to use'
@@ -50,7 +51,7 @@ jobs:
           fetch-depth: 1
       - name: Set up Packer
         id: setup
-        uses: hashicorp/setup-packer@b9cd54a3c349d3f38e8881555d616ced269862dd  # v3
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232  # v3
         with:
           packer_version: "${{ env.PACKER_VERSION }}"
       - name: Packer Init

@@ -12,7 +12,8 @@ on:
     inputs:
       terraform_environment:
         description: 'Terraform Environment to use and load the variable files'
-        required: true
+        required: false
+        default: 'dev'
         type: string
       terraform_version:
         description: 'Terraform version to use'

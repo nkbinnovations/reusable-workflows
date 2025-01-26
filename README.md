@@ -201,7 +201,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   **INPUTS**
 
-  - **terraform_environment:** *(required)*
+  - **terraform_environment:** *(optional)*
 
     The Terraform Environment to apply/plan the configurations in the user repository.
 
@@ -246,7 +246,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   **INPUTS**
 
-  - **packer_environment:** *(required)*
+  - **packer_environment:** *(optional)*
 
     The Packer Environment to inspect/build the configurations in the user repository.
 
@@ -267,7 +267,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **packer_action:** *(optional)*
 
-    The Packer action to apply on the packer configuration files in the user repository. `default('plan')`
+    The Packer action to apply on the packer configuration files in the user repository. `default('inspect')`
 
   example
   ```YAML
@@ -275,7 +275,7 @@ This repository contains several GitHub Actions workflows for linting and other 
       name: packer-deploy
       uses: nkbinnovations/reusable-workflows/.github/workflows/github-packer-deploy.yaml@v1 # best to use the SHA instead of tags for immutable code.
       with:
-        packer_version: '1.10.3'
-        packer_action: 'plan'
+        packer_version: '1.8.3'
+        packer_action: 'inspect'
   ```
 </details>
