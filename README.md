@@ -200,6 +200,17 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   **INPUTS**
 
+  - **terraform_environment:** *(required)*
+
+    The Terraform Environment to apply/plan the configurations in the user repository.
+
+    **Note:**
+      - The Variables should be either created directly or under "tfvars" directory of the Terraform directory Variable.
+
+    **Ex:**
+      - dev.tfvars
+      - tfvars/dev.tfvars
+
   - **terraform_version:** *(optional)*
 
     The Terraform version to use for validating the configurations in the user repository. `default('latest')`
@@ -219,7 +230,7 @@ This repository contains several GitHub Actions workflows for linting and other 
       uses: nkbinnovations/reusable-workflows/.github/workflows/github-terraform-deploy.yaml@v1 # best to use the SHA instead of tags for immutable code.
       with:
         terraform_version: '1.10.3'
-        terraform_action: 'plan'
+        terraform_environment: 'dev'
   ```
 </details>
 
@@ -229,7 +240,21 @@ This repository contains several GitHub Actions workflows for linting and other 
 
    Deploys the packer configurations to verify the syntax in the user repository
 
+  **Note:**
+    - This workflow works only for HCL2 Packer templates.
+
   **INPUTS**
+
+  - **packer_environment:** *(required)*
+
+    The Packer Environment to inspect/build the configurations in the user repository.
+
+    **Note:**
+      - The Variables should be either created directly or under "pkrvars" directory of the Packer directory Variable.
+
+    **Ex:**
+      - dev.pkrvars.hcl
+      - tfvars/dev.pkrvars.hcl
 
   - **packer_version:** *(optional)*
 

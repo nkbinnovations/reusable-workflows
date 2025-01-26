@@ -10,6 +10,10 @@ on:
       - edited
   workflow_call:
     inputs:
+      packer_environment:
+        description: 'Packer Environment to use and load the variable files'
+        required: true
+        type: string
       packer_version:
         description: 'Packer version to use'
         required: false
@@ -23,7 +27,7 @@ on:
       packer_action:
         description: 'Packer action to perform'
         required: false
-        default: 'plan'
+        default: 'inspect'
         type: string
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
@@ -32,6 +36,7 @@ env:
   PACKER_VERSION: ${{ github.event.inputs.packer_version || 'latest' }}
   PACKER_DIRECTORY: ${{ github.event.inputs.packer_directory || '.' }}
   PACKER_ACTION: ${{ github.event.inputs.packer_action || 'plan' }}
+  PACKER_ENVIRONMENT: ${{ github.event.inputs.packer_environment }}
 jobs:
   github-packer-deploy:
     permissions:
@@ -51,23 +56,31 @@ jobs:
       - name: Packer Init
         id: init
         run: |-
-          cd "${{ env.PACKER_DIRECTORY }}"
-          packer init -upgrade -no-color
+          packer init -upgrade ${{ env.PACKER_DIRECTORY }}
       - name: Packer Validate
         id: validate
         if: steps.init.outcome == 'success'
         run: |-
-          cd "${{ env.PACKER_DIRECTORY }}"
-          packer validate -no-color -json
+          packer validate -syntax-only ${{ env.PACKER_DIRECTORY }}
       - name: Packer Fmt
         id: fmt
         if: steps.validate.outcome == 'success'
         run: |-
-          packer fmt -diff -write=true -check=true -recursive "${{ env.PACKER_DIRECTORY }}"
+          packer fmt -diff -write=true -recursive "${{ env.PACKER_DIRECTORY }}"
         continue-on-error: true
       - name: Packer ${{ env.PACKER_ACTION }} action
         id: action
-        if: steps.fmt.outcome == 'success'
+        if: steps.fmt.outcome == 'success' && ( env.PACKER_ACTION == 'inspect' || env.PACKER_ACTION == 'build' )
         run: |-
           cd "${{ env.PACKER_DIRECTORY }}"
-          packer "${{ env.PACKER_ACTION }}" -no-color -json
+          extra_vars='';
+          if [[ -d "pkrvars" ]]; then
+            for var_file in pkrvars/${{ env.PACKER_ENVIRONMENT }}*.pkrvars.hcl; do
+              extra_vars="${extra_vars} -var-file=${var_file} ";
+            done
+          else
+            for var_file in ${{ env.PACKER_ENVIRONMENT }}*.pkrvars.hcl; do
+              extra_vars="${extra_vars} -var-file=${var_file} ";
+            done
+          fi
+          packer ${{ env.PACKER_ACTION }} -no-color "${extra_vars}";

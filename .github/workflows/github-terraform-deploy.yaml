@@ -10,6 +10,10 @@ on:
       - edited
   workflow_call:
     inputs:
+      terraform_environment:
+        description: 'Terraform Environment to use and load the variable files'
+        required: true
+        type: string
       terraform_version:
         description: 'Terraform version to use'
         required: false
@@ -32,6 +36,7 @@ env:
   TERRAFORM_VERSION: ${{ github.event.inputs.terraform_version || 'latest' }}
   TERRAFORM_DIRECTORY: ${{ github.event.inputs.terraform_directory || '.' }}
   TERRAFORM_ACTION: ${{ github.event.inputs.terraform_action || 'plan' }}
+  TERRAFORM_ENVIRONMENT: ${{ github.event.inputs.terraform_environment }}
 jobs:
   github-terraform-deploy:
     permissions:
@@ -67,7 +72,21 @@ jobs:
         continue-on-error: true
       - name: Terraform ${{ env.TERRAFORM_ACTION }} action
         id: action
-        if: steps.fmt.outcome == 'success'
+        if: steps.fmt.outcome == 'success' && ( env.TERRAFORM_ACTION == 'plan' || env.TERRAFORM_ACTION == 'apply' )
         run: |-
           cd "${{ env.TERRAFORM_DIRECTORY }}"
-          terraform ${{ env.TERRAFORM_ACTION }} -auto-approve -no-color
+          extra_vars='';
+          if [[ -d "tfvars" ]]; then
+            for var_file in tfvars/${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars; do
+              extra_vars="${extra_vars} -var-file=${var_file} ";
+            done
+          else
+            for var_file in ${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars; do
+              extra_vars="${extra_vars} -var-file=${var_file} ";
+            done
+          fi
+          if [[ "${{ env.TERRAFORM_ACTION }}" == "plan" ]]; then
+            terraform ${{ env.TERRAFORM_ACTION }} -no-color "${extra_vars}";
+          else
+            terraform ${{ env.TERRAFORM_ACTION }} -auto-approve -no-color "${extra_vars}";
+          fi
