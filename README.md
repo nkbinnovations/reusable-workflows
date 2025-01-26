@@ -204,7 +204,6 @@ This repository contains several GitHub Actions workflows for linting and other 
 
     The Terraform Environment to apply/plan the configurations in the user repository.
 
-    **Note:**
       - The Variables should be either created directly or under "tfvars" directory of the Terraform directory Variable.
 
     **Ex:**
