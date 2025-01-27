@@ -35,7 +35,7 @@ on:
       ansible_playbook_file:
         description: 'relative filepath of ansible playbook file to deploy'
         required: false
-        default: 'ansible/playbook-test.yml'
+        default: 'ansible/sample-playbook.yml'
         type: string
     secrets:
       ansible_private_key_path:
@@ -53,8 +53,8 @@ env:
   ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
   ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'ansible/requirements.yml' }}
   ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || 'ansible' }}
-  ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'playbooks/deploy_web_server.yml' }}
-  ANSIBLE_INVENTORY_FILE: ${{ github.event.inputs.ansible_inventory_file || 'inventory/hosts.ini' }}
+  ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'ansible/sample-playbook.yml' }}
+  ANSIBLE_INVENTORY_FILE: ${{ github.event.inputs.ansible_inventory_file || 'ansible/inventory.yml' }}
 jobs:
   github-ansible-deploy:
     permissions:
