@@ -36,7 +36,7 @@ concurrency:
 env:
   TERRAFORM_VERSION: ${{ github.event.inputs.terraform_version || 'latest' }}
   TERRAFORM_DIRECTORY: ${{ github.event.inputs.terraform_directory || '.' }}
-  TERRAFORM_ACTION: ${{ github.event.inputs.terraform_action || 'apply' }}
+  TERRAFORM_ACTION: ${{ github.event.inputs.terraform_action || 'plan' }}
   TERRAFORM_ENVIRONMENT: ${{ github.event.inputs.terraform_environment || 'dev'}}
 jobs:
   github-terraform-deploy:
