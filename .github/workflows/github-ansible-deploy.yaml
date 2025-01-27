@@ -96,5 +96,5 @@ jobs:
           ANSIBLE_ROLES_PATH: "${{ env.ANSIBLE_DIRECTORY }}/roles:${HOME}/.ansible/roles"
           ANSIBLE_COLLECTIONS_PATH: "${{ env.ANSIBLE_DIRECTORY }}/collections:${HOME}/.ansible/collections"
           ANSIBLE_CONFIG: "${{ env.ANSIBLE_DIRECTORY }}/ansible.cfg"
-          DEFAULT_ANSIBLE_USER: "${HOME}/.ssh/private_key.pem"
+          DEFAULT_ANSIBLE_USER: "${USER}"
           DEFAULT_PRIVATE_KEY_PATH: "${HOME}/.ssh/private_key.pem"

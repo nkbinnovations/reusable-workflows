@@ -236,7 +236,6 @@ This repository contains several GitHub Actions workflows for linting and other 
   ```
 </details>
 
-
 <details>
 <summary><b>github-packer-deploy</b></summary>
 
@@ -278,5 +277,53 @@ This repository contains several GitHub Actions workflows for linting and other 
       with:
         packer_version: '1.8.3'
         packer_action: 'inspect'
+  ```
+</details>
+
+<details>
+<summary><b>github-ansible-deploy</b></summary>
+
+   Deploys the ansible configurations to verify the syntax in the user repository
+
+  **INPUTS**
+
+  - **ansible_version:** *(optional)*
+
+    The Ansible version to use for validating the configurations in the user repository. `default('2.18.0')`
+
+  - **ansible_directory:** *(optional)*
+
+    The Relative Directory path for the ansible configurations in the user repository. `default('ansible')`
+
+  - **ansible_requirements_file:** *(optional)*
+
+    Relative path of the ansible-galaxy dependencies configuration file in the user repository. `default('ansible/requirements.yml')`
+
+  - **ansible_inventory_file:** *(optional)*
+
+    Relative path of the ansible inventory file in the user repository. `default('ansible/inventory.yml')`
+
+  - **ansible_playbook_file:** *(optional)*
+
+    Relative path of the ansible playbook file in the user repository. `default('ansible/sample-playbook.yml')`
+
+  **SECRETS**
+
+  - **ansible_user:** *(required)*
+
+    The User for running the Ansible Configurations in the user repository.
+
+  - **ansible_private_key_path:** *(required)*
+
+    The User private key to connect to target servers for running the Ansible Configurations in the user repository.
+
+  example
+  ```YAML
+    github-ansible-deploy:
+      name: ansible-deploy
+      uses: nkbinnovations/reusable-workflows/.github/workflows/github-ansible-deploy.yaml@v1 # best to use the SHA instead of tags for immutable code.
+      with:
+        ansible_version: "${USER}"
+        ansible_private_key_path: "${HOME}/.ssh/private_key.pem"
   ```
 </details>
