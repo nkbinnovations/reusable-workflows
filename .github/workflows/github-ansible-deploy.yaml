@@ -1,5 +1,5 @@
 ---
-name: github-ansible-lint
+name: github-ansible-deploy
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
@@ -15,7 +15,7 @@ on:
       ansible_version:
         description: 'Ansible version to use'
         required: false
-        default: 'v2.18.0'
+        default: '2.18.0'
         type: string
       ansible_directory:
         description: 'relative path to ansible directory'
@@ -56,7 +56,7 @@ env:
   ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'playbooks/deploy_web_server.yml' }}
   ANSIBLE_INVENTORY_FILE: ${{ github.event.inputs.ansible_inventory_file || 'inventory/hosts.ini' }}
 jobs:
-  github-ansible-lint:
+  github-ansible-deploy:
     permissions:
       contents: read
       pull-requests: write
@@ -72,7 +72,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Set up Ansible
         run: |-
-          pip install ansible==${{ env.ANSIBLE_VERSION }}
+          pip install ansible-core==${{ env.ANSIBLE_VERSION }}
       - name: Install Ansible dependencies
         run: |-
           if [ -f "${{ env.ANSIBLE_REQUIREMENTS_FILE }}" ]; then
@@ -81,7 +81,8 @@ jobs:
       - name: Generate Private Keys
         if: github.event_name == 'pull_request'
         run: |-
-          echo "${{ secrets.ansible_private_key }}" > ${HOME}/.ssh/private_key.pem;
+          mkdir -p ${HOME}/.ssh;
+          echo "${{ secrets.ANSIBLE_PRIVATE_KEY_SAMPLE }}" > ${HOME}/.ssh/private_key.pem;
           chmod 600 ${HOME}/.ssh/private_key.pem;
       - name: Ansible Playbook Deploy
         id: ansible-playbook-deploy
