@@ -8,6 +8,8 @@
 [![github-terraform-lint](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-lint.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-lint.yaml)
 [![github-labeler](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-labeler.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-labeler.yaml)
 [![github-yaml-lint](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml)
+[![github-terraform-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml)
+[![github-packer-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml)
 
 ## Workflows
 
@@ -43,7 +45,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **ansible_directory:** *(optional)*
 
-    Relative ansible folder path of the ansible configuration folders in the user repository`default('.')`
+    Relative ansible folder path of the ansible configuration folders in the user repository. `default('.')`
 
   - **ansible_lint_config:** *(optional)*
 
@@ -72,7 +74,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **packer_directory:** *(optional)*
 
-    Relative packer folder path of the ansible configuration folders in the user repository`default('.')`
+    Relative packer folder path of the ansible configuration folders in the user repository. `default('.')`
 
   example
   ```YAML
@@ -85,7 +87,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 <details>
 <summary><b>github-terraform-lint</b></summary>
 
-   Runs the Lint on the packer configurations to verify the syntax in the user repository
+   Runs the Lint on the terraform configurations to verify the syntax in the user repository
 
   **INPUTS**
 
@@ -95,7 +97,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **terraform_directory:** *(optional)*
 
-    Relative Terraform folder path of the ansible configuration folders in the user repository`default('.')`
+    Relative Terraform folder path of the configuration files in the user repository. `default('.')`
 
   example
   ```YAML
@@ -189,5 +191,91 @@ This repository contains several GitHub Actions workflows for linting and other 
       uses: nkbinnovations/reusable-workflows/.github/workflows/github-pre-commit-checks.yaml@v1 # best to use the SHA instead of tags for immutable code.
       with:
         python_version: '3.12.0'
+  ```
+</details>
+
+<details>
+<summary><b>github-terraform-deploy</b></summary>
+
+   Deploys the terraform configurations to verify the syntax in the user repository
+
+  **INPUTS**
+
+  - **terraform_environment:** *(optional)*
+
+    The Terraform Environment to apply/plan the configurations in the user repository.
+
+    **Note:**
+      - The Variables should be either created directly or under "tfvars" directory of the Terraform directory Variable.
+
+    **Ex:**
+      - dev.tfvars
+      - tfvars/dev.tfvars
+
+  - **terraform_version:** *(optional)*
+
+    The Terraform version to use for validating the configurations in the user repository. `default('latest')`
+
+  - **terraform_directory:** *(optional)*
+
+    Relative Terraform folder path of the configuration folders in the user repository. `default('.')`
+
+  - **terraform_action:** *(optional)*
+
+    The Terraform action to apply on the terraform configuration files in the user repository. `default('plan')`
+
+  example
+  ```YAML
+    github-terraform-deploy:
+      name: terraform-deploy
+      uses: nkbinnovations/reusable-workflows/.github/workflows/github-terraform-deploy.yaml@v1 # best to use the SHA instead of tags for immutable code.
+      with:
+        terraform_version: '1.10.3'
+        terraform_environment: 'dev'
+  ```
+</details>
+
+
+<details>
+<summary><b>github-packer-deploy</b></summary>
+
+   Deploys the packer configurations to verify the syntax in the user repository
+
+  **Note:**
+    - This workflow works only for HCL2 Packer templates.
+
+  **INPUTS**
+
+  - **packer_environment:** *(optional)*
+
+    The Packer Environment to inspect/build the configurations in the user repository.
+
+    **Note:**
+      - The Variables should be either created directly or under "pkrvars" directory of the Packer directory Variable.
+
+    **Ex:**
+      - dev.pkrvars.hcl
+      - tfvars/dev.pkrvars.hcl
+
+  - **packer_version:** *(optional)*
+
+    The Packer version to use for validating the configurations in the user repository. `default('latest')`
+
+  - **packer_directory:** *(optional)*
+
+    Relative Packer folder path of the configuration folders in the user repository. `default('.')`
+
+  - **packer_action:** *(optional)*
+
+    The Packer action to apply on the packer configuration files in the user repository. `default('inspect')`
+
+  example
+  ```YAML
+    github-packer-deploy:
+      name: packer-deploy
+      uses: nkbinnovations/reusable-workflows/.github/workflows/github-packer-deploy.yaml@v1 # best to use the SHA instead of tags for immutable code.
+      with:
+        packer_version: '1.8.3'
+        packer_action: 'inspect'
   ```
 </details>
