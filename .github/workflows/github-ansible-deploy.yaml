@@ -87,7 +87,6 @@ jobs:
       - name: Ansible Playbook Deploy
         id: ansible-playbook-deploy
         run: |-
-          echo "${{ secrets.ansible_private_key }}" > ${HOME}/.ssh/private_key.pem;
           ansible-playbook \
             -i ${{ env.ANSIBLE_INVENTORY_FILE }} \
             ${{ env.ANSIBLE_PLAYBOOK_FILE }} \
