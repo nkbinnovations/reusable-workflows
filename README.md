@@ -10,6 +10,7 @@
 [![github-yaml-lint](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml)
 [![github-terraform-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml)
 [![github-packer-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml)
+[![github-ansible-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-ansible-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-ansible-deploy.yaml)
 
 ## Workflows
 
