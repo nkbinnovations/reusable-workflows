@@ -20,14 +20,14 @@ on:
       packer_directory:
         description: 'packer files to lint'
         required: false
-        default: '.'
+        default: 'packer'
         type: string
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   PACKER_VERSION: ${{ github.event.inputs.terraform_version || 'latest' }}
-  PACKER_DIRECTORY: ${{ github.event.inputs.terraform_directory || '.' }}
+  PACKER_DIRECTORY: ${{ github.event.inputs.terraform_directory || 'packer' }}
 jobs:
   github-packer-lint:
     permissions:

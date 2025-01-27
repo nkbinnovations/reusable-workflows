@@ -15,12 +15,12 @@ on:
       ansible_requirements_file:
         description: 'ansible requirements file for role and collection dependencies'
         required: false
-        default: ''
+        default: 'ansible/requirements.yml'
         type: string
       ansible_directory:
         description: 'relative path to ansible directory'
         required: false
-        default: '.'
+        default: 'ansible'
         type: string
       ansible_lint_config:
         description: 'relative path to ansible lint config file'
@@ -32,8 +32,8 @@ concurrency:
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
-  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || '' }}
-  ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || '.' }}
+  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'ansible/requirements.yml' }}
+  ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || 'ansible' }}
 jobs:
   github-ansible-lint:
     permissions:
@@ -50,6 +50,9 @@ jobs:
         run: |-
           if [ ! -f "${{ env.ANSIBLE_LINT_CONFIG }}" ]; then
             curl -sSL -o ${{ env.ANSIBLE_LINT_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/${{ env.ANSIBLE_LINT_CONFIG }}
+          fi
+          if [ ! -f "${{ env.ANSIBLE_REQUIREMENTS_FILE }}" ]; then
+            curl -sSL -o ${{ env.ANSIBLE_REQUIREMENTS_FILE }} https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/${{ env.ANSIBLE_REQUIREMENTS_FILE }}
           fi
       - name: Run ansible-lint
         uses: ansible/ansible-lint@e918e02374cc9148abfe6d0fa04417ee89f0def9  # v25

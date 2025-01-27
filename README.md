@@ -10,6 +10,7 @@
 [![github-yaml-lint](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-yaml-lint.yaml)
 [![github-terraform-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-terraform-deploy.yaml)
 [![github-packer-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-packer-deploy.yaml)
+[![github-ansible-deploy](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-ansible-deploy.yaml/badge.svg)](https://github.com/nkbinnovations/reusable-workflows/actions/workflows/github-ansible-deploy.yaml)
 
 ## Workflows
 
@@ -45,7 +46,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **ansible_directory:** *(optional)*
 
-    Relative ansible folder path of the ansible configuration folders in the user repository. `default('.')`
+    Relative ansible folder path of the ansible configuration folders in the user repository. `default('ansible')`
 
   - **ansible_lint_config:** *(optional)*
 
@@ -74,7 +75,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **packer_directory:** *(optional)*
 
-    Relative packer folder path of the ansible configuration folders in the user repository. `default('.')`
+    Relative packer folder path of the ansible configuration folders in the user repository. `default('packer')`
 
   example
   ```YAML
@@ -97,7 +98,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **terraform_directory:** *(optional)*
 
-    Relative Terraform folder path of the configuration files in the user repository. `default('.')`
+    Relative Terraform folder path of the configuration files in the user repository. `default('terraform')`
 
   example
   ```YAML
@@ -218,7 +219,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **terraform_directory:** *(optional)*
 
-    Relative Terraform folder path of the configuration folders in the user repository. `default('.')`
+    Relative Terraform folder path of the configuration folders in the user repository. `default('terraform')`
 
   - **terraform_action:** *(optional)*
 
@@ -263,7 +264,7 @@ This repository contains several GitHub Actions workflows for linting and other 
 
   - **packer_directory:** *(optional)*
 
-    Relative Packer folder path of the configuration folders in the user repository. `default('.')`
+    Relative Packer folder path of the configuration folders in the user repository. `default('packer')`
 
   - **packer_action:** *(optional)*
 
