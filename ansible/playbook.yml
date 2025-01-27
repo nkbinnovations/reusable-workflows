@@ -1,7 +1,10 @@
 ---
-hosts: localhost
-task:
-  - name: Install Apache
-    apt:
-      name: apache2
-      state: present
+- name: Sample Ansible Playbook
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Create a local file
+      file:
+        path: "/tmp/testfile"
+        state: touch
