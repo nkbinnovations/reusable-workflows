@@ -83,5 +83,4 @@ jobs:
           if [[ "${{ env.TERRAFORM_ACTION }}" == "apply" ]]; then
             extra_vars+=("-auto-approve")
           fi
-          echo "terraform ${{ env.TERRAFORM_ACTION }} ${extra_vars[@]}"
           terraform ${{ env.TERRAFORM_ACTION }} "${extra_vars[@]}"
