@@ -73,6 +73,6 @@ jobs:
         id: action
         if: steps.fmt.outcome == 'success' && ( env.PACKER_ACTION == 'inspect' || env.PACKER_ACTION == 'build' )
         run: |-
-          cd "${{ env.PACKER_DIRECTORY }}"
           extra_vars=$(find "${{ env.PACKER_DIRECTORY }}" -name "${{ env.PACKER_ENVIRONMENT }}*.pkrvars.hcl" -exec printf " -var-file={} " \;)
+          cd "${{ env.PACKER_DIRECTORY }}"
           packer "${{ env.PACKER_ACTION }}" "${extra_vars}"
