@@ -76,12 +76,12 @@ jobs:
         if: steps.fmt.outcome == 'success' && ( env.TERRAFORM_ACTION == 'plan' || env.TERRAFORM_ACTION == 'apply' )
         run: |-
           cd "${{ env.TERRAFORM_DIRECTORY }}"
-          extra_vars=$(find "${{ env.TERRAFORM_DIRECTORY }}" -name "${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars" -exec printf " -var-file={} " \;)
+          extra_vars=()
+          while IFS= read -r -d '' var_file; do
+            extra_vars+=("-var-file=$var_file")
+          done < <(find "${{ env.TERRAFORM_DIRECTORY }}" -name "${{ env.TERRAFORM_ENVIRONMENT }}*.tfvars" -print0)
           if [[ "${{ env.TERRAFORM_ACTION }}" == "apply" ]]; then
-            extra_vars=" -auto-approve ${extra_vars}"
+            extra_vars+=("-auto-approve")
           fi
-          if [[ -z "${extra_vars}" ]]; then
-            extra_vars=""
-          fi
-          echo "terraform ${{ env.TERRAFORM_ACTION }} ${extra_vars}"
-          terraform ${{ env.TERRAFORM_ACTION }} "${extra_vars}"
+          echo "terraform ${{ env.TERRAFORM_ACTION }} ${extra_vars[@]}"
+          terraform ${{ env.TERRAFORM_ACTION }} "${extra_vars[@]}"
