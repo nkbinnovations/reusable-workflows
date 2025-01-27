@@ -241,8 +241,8 @@ This repository contains several GitHub Actions workflows for linting and other 
 
    Deploys the packer configurations to verify the syntax in the user repository
 
-  **Note:**
-    - This workflow works only for HCL2 Packer templates.
+   **Note:**
+     - This workflow works only for HCL2 Packer templates.
 
   **INPUTS**
 
