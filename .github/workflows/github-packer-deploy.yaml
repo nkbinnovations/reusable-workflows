@@ -23,7 +23,7 @@ on:
       packer_directory:
         description: 'Packer files directory to lint'
         required: false
-        default: '.'
+        default: 'packer'
         type: string
       packer_action:
         description: 'Packer action to perform'
@@ -35,7 +35,7 @@ concurrency:
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   PACKER_VERSION: ${{ github.event.inputs.packer_version || 'latest' }}
-  PACKER_DIRECTORY: ${{ github.event.inputs.packer_directory || '.' }}
+  PACKER_DIRECTORY: ${{ github.event.inputs.packer_directory || 'packer' }}
   PACKER_ACTION: ${{ github.event.inputs.packer_action || 'inspect' }}
   PACKER_ENVIRONMENT: ${{ github.event.inputs.packer_environment || 'dev'}}
 jobs:

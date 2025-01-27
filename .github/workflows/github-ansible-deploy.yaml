@@ -1,0 +1,100 @@
+---
+name: github-ansible-lint
+run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
+on:
+  pull_request:
+    types:
+      - unlabeled
+      - labeled
+      - synchronize
+      - opened
+      - reopened
+      - edited
+  workflow_call:
+    inputs:
+      ansible_version:
+        description: 'Ansible version to use'
+        required: false
+        default: 'v2.18.0'
+        type: string
+      ansible_directory:
+        description: 'relative path to ansible directory'
+        required: false
+        default: 'ansible'
+        type: string
+      ansible_requirements_file:
+        description: 'relative ansible requirements file for role and collection dependencies'
+        required: false
+        default: 'ansible/requirements.yml'
+        type: string
+      ansible_inventory_file:
+        description: 'relative ansible inventory file for deploying the playbooks'
+        required: false
+        default: 'ansible/inventory.yml'
+        type: string
+      ansible_playbook_file:
+        description: 'relative filepath of ansible playbook file to deploy'
+        required: false
+        default: 'ansible/playbook-test.yml'
+        type: string
+    secrets:
+      ansible_private_key_path:
+        description: 'Private key for ansible deployment'
+        required: true
+      ansible_user:
+        description: 'User for ansible deployment'
+        required: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
+  cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
+env:
+  PYTHON_VERSION: '3.13.0'
+  ANSIBLE_VERSION: ${{ github.event.inputs.ansible_version || 'v2.18.0' }}
+  ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
+  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || '' }}
+  ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || 'ansible' }}
+  ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'playbooks/deploy_web_server.yml' }}
+  ANSIBLE_INVENTORY_FILE: ${{ github.event.inputs.ansible_inventory_file || 'inventory/hosts.ini' }}
+jobs:
+  github-ansible-lint:
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+        with:
+          fetch-depth: 1
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Set up Ansible
+        run: |-
+          pip install ansible==${{ env.ANSIBLE_VERSION }}
+      - name: Install Ansible dependencies
+        run: |-
+          if [ -f "${{ env.ANSIBLE_REQUIREMENTS_FILE }}" ]; then
+            ansible-galaxy install -r ${{ env.ANSIBLE_REQUIREMENTS_FILE }}
+          fi
+      - name: Generate Private Keys
+        if: github.event_name == 'pull_request'
+        run: |-
+          echo "${{ secrets.ansible_private_key }}" > ${HOME}/.ssh/private_key.pem;
+          chmod 600 ${HOME}/.ssh/private_key.pem;
+      - name: Ansible Playbook Deploy
+        id: ansible-playbook-deploy
+        run: |-
+          echo "${{ secrets.ansible_private_key }}" > ${HOME}/.ssh/private_key.pem;
+          ansible-playbook \
+            -i ${{ env.ANSIBLE_INVENTORY_FILE }} \
+            ${{ env.ANSIBLE_PLAYBOOK_FILE }} \
+            --private-key ${{ secrets.ansible_private_key_path || env.DEFAULT_PRIVATE_KEY_PATH }}\
+            -u ${{ secrets.ansible_user || env.DEFAULT_ANSIBLE_USER }};
+        env:
+          ANSIBLE_ROLES_PATH: "${{ env.ANSIBLE_DIRECTORY }}/roles:${HOME}/.ansible/roles"
+          ANSIBLE_COLLECTIONS_PATH: "${{ env.ANSIBLE_DIRECTORY }}/collections:${HOME}/.ansible/collections"
+          ANSIBLE_CONFIG: "${{ env.ANSIBLE_DIRECTORY }}/ansible.cfg"
+          DEFAULT_ANSIBLE_USER: "${HOME}/.ssh/private_key.pem"
+          DEFAULT_PRIVATE_KEY_PATH: "${HOME}/.ssh/private_key.pem"

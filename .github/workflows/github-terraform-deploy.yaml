@@ -23,7 +23,7 @@ on:
       terraform_directory:
         description: 'Terraform files directory to lint'
         required: false
-        default: '.'
+        default: 'terraform'
         type: string
       terraform_action:
         description: 'Terraform action to perform'
@@ -35,7 +35,7 @@ concurrency:
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   TERRAFORM_VERSION: ${{ github.event.inputs.terraform_version || 'latest' }}
-  TERRAFORM_DIRECTORY: ${{ github.event.inputs.terraform_directory || '.' }}
+  TERRAFORM_DIRECTORY: ${{ github.event.inputs.terraform_directory || 'terraform' }}
   TERRAFORM_ACTION: ${{ github.event.inputs.terraform_action || 'plan' }}
   TERRAFORM_ENVIRONMENT: ${{ github.event.inputs.terraform_environment || 'dev'}}
 jobs:

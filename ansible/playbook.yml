@@ -1,0 +1,7 @@
+---
+hosts: localhost
+task:
+  - name: Install Apache
+    apt:
+      name: apache2
+      state: present
