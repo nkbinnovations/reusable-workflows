@@ -322,7 +322,7 @@ This repository contains several GitHub Actions workflows for linting and other 
     github-ansible-deploy:
       name: ansible-deploy
       uses: nkbinnovations/reusable-workflows/.github/workflows/github-ansible-deploy.yaml@v1 # best to use the SHA instead of tags for immutable code.
-      with:
+      secrets:
         ansible_version: "${USER}"
         ansible_private_key_path: "${HOME}/.ssh/private_key.pem"
   ```
