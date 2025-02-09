@@ -92,11 +92,15 @@ jobs:
           if [[ ! -f "${{ secrets.ansible_private_key_path }}" && "${{ github.event_name }}" != "pull_request" ]]; then
             echo "Private key not found. Exiting...";
           else
-            ansible-playbook \
-              -i "${{ env.ANSIBLE_INVENTORY_FILE }}" \
-              "${{ env.ANSIBLE_PLAYBOOK_FILE }}" \
-              --private-key "${{ secrets.ansible_private_key_path || env.DEFAULT_PRIVATE_KEY_PATH }}" \
-              -u "${{ secrets.ansible_user || env.DEFAULT_ANSIBLE_USER }}";
+            if [[ -f "${{ env.ANSIBLE_INVENTORY_FILE }}" && -f  "${{ env.ANSIBLE_PLAYBOOK_FILE }}" ]]; then
+              ansible-playbook \
+                -i "${{ env.ANSIBLE_INVENTORY_FILE }}" \
+                "${{ env.ANSIBLE_PLAYBOOK_FILE }}" \
+                --private-key "${{ secrets.ansible_private_key_path || env.DEFAULT_PRIVATE_KEY_PATH }}" \
+                -u "${{ secrets.ansible_user || env.DEFAULT_ANSIBLE_USER }}";
+            else
+              echo "Inventory/Playbook file not found. Exiting...";
+            fi
           fi
         env:
           ANSIBLE_ROLES_PATH: "${{ env.ANSIBLE_DIRECTORY }}/roles:${HOME}/.ansible/roles"
