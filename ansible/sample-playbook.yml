@@ -5,6 +5,7 @@
   gather_facts: false
   tasks:
     - name: Create a local file
-      file:
+      ansible.builtin.file:
         path: "/tmp/testfile"
         state: touch
+        mode: '600'

@@ -39,7 +39,7 @@ on:
         type: string
     secrets:
       ansible_private_key_path:
-        description: 'Private key for ansible deployment'
+        description: 'Private key path for ansible deployment'
         required: true
       ansible_user:
         description: 'User for ansible deployment'
@@ -51,9 +51,9 @@ env:
   PYTHON_VERSION: '3.13.0'
   ANSIBLE_VERSION: ${{ github.event.inputs.ansible_version || 'v2.18.0' }}
   ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
-  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'ansible/requirements.yml' }}
+  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'requirements.yml' }}
   ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || 'ansible' }}
-  ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'ansible/sample-playbook.yml' }}
+  ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'sample-playbook.yml' }}
   ANSIBLE_INVENTORY_FILE: ${{ github.event.inputs.ansible_inventory_file || 'ansible/inventory.yml' }}
 jobs:
   github-ansible-deploy:
@@ -81,17 +81,28 @@ jobs:
       - name: Generate Private Keys
         if: github.event_name == 'pull_request'
         run: |-
-          mkdir -p ${HOME}/.ssh;
-          echo "${{ secrets.ANSIBLE_PRIVATE_KEY_SAMPLE }}" > ${HOME}/.ssh/private_key.pem;
-          chmod 600 ${HOME}/.ssh/private_key.pem;
+          mkdir -p "${HOME}/.ssh";
+          pass="$(openssl rand -base64 32)";
+          echo "::add-mask::$pass"
+          ssh-keygen -t rsa -b 4096 -C "${USER}" -f "${HOME}/.ssh/private_key.pem" -P "${pass}";
+          chmod 600 "${HOME}/.ssh/private_key.pem";
       - name: Ansible Playbook Deploy
         id: ansible-playbook-deploy
         run: |-
-          ansible-playbook \
-            -i ${{ env.ANSIBLE_INVENTORY_FILE }} \
-            ${{ env.ANSIBLE_PLAYBOOK_FILE }} \
-            --private-key ${{ secrets.ansible_private_key_path || env.DEFAULT_PRIVATE_KEY_PATH }}\
-            -u ${{ secrets.ansible_user || env.DEFAULT_ANSIBLE_USER }};
+          if [[ ! -f "${{ secrets.ansible_private_key_path }}" && "${{ github.event_name }}" != "pull_request" ]]; then
+            echo "Private key not found. Exiting...";
+          else
+            if [[ -f "${{ env.ANSIBLE_INVENTORY_FILE }}" && -f  "${{ env.ANSIBLE_PLAYBOOK_FILE }}" ]]; then
+              ansible-playbook \
+                -i "${{ env.ANSIBLE_INVENTORY_FILE }}" \
+                "${{ env.ANSIBLE_PLAYBOOK_FILE }}" \
+                --private-key "${{ secrets.ansible_private_key_path || env.DEFAULT_PRIVATE_KEY_PATH }}" \
+                -u "${{ secrets.ansible_user || env.DEFAULT_ANSIBLE_USER }}";
+            else
+              echo "Inventory/Playbook file not found. Exiting...";
+            fi
+          fi
+        working-directory: "${{ github.workspace }}/${{ env.ANSIBLE_DIRECTORY }}"
         env:
           ANSIBLE_ROLES_PATH: "${{ env.ANSIBLE_DIRECTORY }}/roles:${HOME}/.ansible/roles"
           ANSIBLE_COLLECTIONS_PATH: "${{ env.ANSIBLE_DIRECTORY }}/collections:${HOME}/.ansible/collections"
