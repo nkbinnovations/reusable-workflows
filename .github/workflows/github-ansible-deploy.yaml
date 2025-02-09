@@ -82,10 +82,10 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |-
           mkdir -p "${HOME}/.ssh";
-          echo "${ANSIBLE_PRIVATE_KEY}" > "${HOME}/.ssh/private_key.pem";
+          pass="$(openssl rand -base64 32)";
+          echo "::add-mask::$pass"
+          ssh-keygen -t rsa -b 4096 -C "${USER}" -f "${HOME}/.ssh/private_key.pem" -P "${pass}";
           chmod 600 "${HOME}/.ssh/private_key.pem";
-        env:
-          ANSIBLE_PRIVATE_KEY: "${{ secrets.ANSIBLE_PRIVATE_KEY_SAMPLE }}"
       - name: Ansible Playbook Deploy
         id: ansible-playbook-deploy
         run: |-
