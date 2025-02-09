@@ -51,9 +51,9 @@ env:
   PYTHON_VERSION: '3.13.0'
   ANSIBLE_VERSION: ${{ github.event.inputs.ansible_version || 'v2.18.0' }}
   ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
-  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'ansible/requirements.yml' }}
+  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'requirements.yml' }}
   ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || 'ansible' }}
-  ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'ansible/sample-playbook.yml' }}
+  ANSIBLE_PLAYBOOK_FILE: ${{ github.event.inputs.ansible_playbook_file || 'sample-playbook.yml' }}
   ANSIBLE_INVENTORY_FILE: ${{ github.event.inputs.ansible_inventory_file || 'ansible/inventory.yml' }}
 jobs:
   github-ansible-deploy:
@@ -102,6 +102,7 @@ jobs:
               echo "Inventory/Playbook file not found. Exiting...";
             fi
           fi
+        working-directory: "${{ github.workspace }}/${{ env.ANSIBLE_DIRECTORY }}"
         env:
           ANSIBLE_ROLES_PATH: "${{ env.ANSIBLE_DIRECTORY }}/roles:${HOME}/.ansible/roles"
           ANSIBLE_COLLECTIONS_PATH: "${{ env.ANSIBLE_DIRECTORY }}/collections:${HOME}/.ansible/collections"

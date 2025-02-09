@@ -32,7 +32,7 @@ concurrency:
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
   ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
-  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'ansible/requirements.yml' }}
+  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'requirements.yml' }}
   ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || 'ansible' }}
 jobs:
   github-ansible-lint:
@@ -58,5 +58,5 @@ jobs:
         uses: ansible/ansible-lint@e918e02374cc9148abfe6d0fa04417ee89f0def9  # v25
         with:
           setup_python: "true"
-          working_directory: "${{ env.ANSIBLE_DIRECTORY }}"
+          working_directory: "${{ github.workspace }}/${{ env.ANSIBLE_DIRECTORY }}"
           requirements_file: "${{ env.ANSIBLE_REQUIREMENTS_FILE }}"
