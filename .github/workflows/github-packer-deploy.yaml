@@ -34,10 +34,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
-  PACKER_VERSION: ${{ github.event.inputs.packer_version || 'latest' }}
-  PACKER_DIRECTORY: ${{ github.event.inputs.packer_directory || 'packer' }}
-  PACKER_ACTION: ${{ github.event.inputs.packer_action || 'inspect' }}
-  PACKER_ENVIRONMENT: ${{ github.event.inputs.packer_environment || 'dev'}}
+  PACKER_VERSION: ${{ inputs.packer_version || 'latest' }}
+  PACKER_DIRECTORY: ${{ inputs.packer_directory || 'packer' }}
+  PACKER_ACTION: ${{ inputs.packer_action || 'inspect' }}
+  PACKER_ENVIRONMENT: ${{ inputs.packer_environment || 'dev'}}
 jobs:
   github-packer-deploy:
     permissions:
