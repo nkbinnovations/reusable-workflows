@@ -19,7 +19,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
-  PYTHON_VERSION: ${{ github.event.inputs.python_version || '3.13.0' }}
+  PYTHON_VERSION: ${{ inputs.python_version || '3.13.0' }}
 permissions:
   contents: read
 jobs:

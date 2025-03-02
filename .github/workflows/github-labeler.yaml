@@ -18,7 +18,7 @@ on:
         default: '.github/labeler.yml'
         type: string
 env:
-  LABELER_CONFIG: ${{ github.event.inputs.labeler_config || '.github/labeler.yml' }}
+  LABELER_CONFIG: ${{ inputs.labeler_config || '.github/labeler.yml' }}
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch

@@ -31,9 +31,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
-  ANSIBLE_LINT_CONFIG: ${{ github.event.inputs.ansible_lint_config || '.ansible-lint.yaml' }}
-  ANSIBLE_REQUIREMENTS_FILE: ${{ github.event.inputs.ansible_requirements_file || 'requirements.yml' }}
-  ANSIBLE_DIRECTORY: ${{ github.event.inputs.ansible_directory || 'ansible' }}
+  ANSIBLE_LINT_CONFIG: ${{ inputs.ansible_lint_config || '.ansible-lint.yaml' }}
+  ANSIBLE_REQUIREMENTS_FILE: ${{ inputs.ansible_requirements_file || 'requirements.yml' }}
+  ANSIBLE_DIRECTORY: ${{ inputs.ansible_directory || 'ansible' }}
 jobs:
   github-ansible-lint:
     permissions:

@@ -34,10 +34,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
 env:
-  TERRAFORM_VERSION: ${{ github.event.inputs.terraform_version || 'latest' }}
-  TERRAFORM_DIRECTORY: ${{ github.event.inputs.terraform_directory || 'terraform' }}
-  TERRAFORM_ACTION: ${{ github.event.inputs.terraform_action || 'plan' }}
-  TERRAFORM_ENVIRONMENT: ${{ github.event.inputs.terraform_environment || 'dev'}}
+  TERRAFORM_VERSION: ${{ inputs.terraform_version || 'latest' }}
+  TERRAFORM_DIRECTORY: ${{ inputs.terraform_directory || 'terraform' }}
+  TERRAFORM_ACTION: ${{ inputs.terraform_action || 'plan' }}
+  TERRAFORM_ENVIRONMENT: ${{ inputs.terraform_environment || 'dev'}}
 jobs:
   github-terraform-deploy:
     permissions:
