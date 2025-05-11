@@ -1,55 +1,27 @@
 ---
-name: github-pre-commit-checks
+name: pre-commit-checks
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
     types:
-      - opened
+      - unlabeled
+      - labeled
       - synchronize
+      - opened
       - reopened
       - edited
-  workflow_call:
-    inputs:
-      python_version:
-        description: 'Python version to use'
-        required: false
-        default: '3.13.0'
-        type: string
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
-env:
-  PYTHON_VERSION: ${{ inputs.python_version || '3.13.0' }}
 permissions:
   contents: read
+  pull-requests: write
 jobs:
-  github-pre-commit-checks:
+  pre-commit-checks:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
-      - name: Set up Python
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5
+      - name: Run Pre-Commit Checks
+        id: pre-commit
+        uses: nkbinnovations/reusable-actions/.github/actions/pre-commit@v1
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install python dependencies
-        run: |-
-          if [ -f requirements.txt ]; then
-            python -m pip install -r requirements.txt
-          else
-            python -m pip install pre-commit
-          fi
-      - name: Download Pre-Commit Config
-        run: |-
-          if [ ! -f .pre-commit-config.yaml ]; then
-            curl -sSL -o .pre-commit-config.yaml https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/.pre-commit-config.yaml;
-          fi
-          if [ ! -f .yamlfmt ]; then
-            curl -sSL -o .yamlfmt https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/.yamlfmt;
-          fi
-          if [ ! -f .yamllint ]; then
-            curl -sSL -o .yamllint https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/.yamllint;
-          fi
-      - name: Run pre-commit
-        run: |-
-          pre-commit run --all-files --verbose
+          python_version: '3.13.0'

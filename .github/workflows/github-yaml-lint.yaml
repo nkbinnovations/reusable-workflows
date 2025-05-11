@@ -1,5 +1,5 @@
 ---
-name: github-yaml-lint
+name: yaml-lint
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
@@ -10,37 +10,18 @@ on:
       - opened
       - reopened
       - edited
-  workflow_call:
-    inputs:
-      yamllint_config:
-        description: 'yamllint config file'
-        required: false
-        default: '.yamllint'
-        type: string
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
-env:
-  PYTHON_VERSION: '3.13.0'
-  YAML_LINT_CONFIG: ${{ inputs.yamllint_config || '.yamllint' }}
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
-  github-yaml-lint:
-    permissions:
-      contents: read
-      pull-requests: write
+  yaml-lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+      - name: Run YAML Linters
+        id: yaml-lint
+        uses: nkbinnovations/reusable-actions/.github/actions/yaml-lint@v1
         with:
-          fetch-depth: 1
-      - name: Set up Python
-        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Set up yamllint
-        run: |-
-          pip install yamllint
-      - name: Lint yaml files
-        run: |-
-          yamllint -c "${{ env.YAML_LINT_CONFIG }}" .
+          python_version: '3.13.0'
