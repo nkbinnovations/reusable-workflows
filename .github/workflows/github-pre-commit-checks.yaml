@@ -25,7 +25,3 @@ jobs:
         uses: nkbinnovations/reusable-actions/.github/actions/pre-commit@v1
         with:
           python_version: '3.13.0'
-          action_lint_config: ${{ github.workspace }}/.github/actions/pre-commit/.actionlint.yaml
-          yamlfmt_config: ${{ github.workspace }}/.github/actions/pre-commit/.yamlfmt
-          yamllint_config: ${{ github.workspace }}/.github/actions/pre-commit/.yamllint
-          pre_commit_config: ${{ github.workspace }}/.github/actions/pre-commit/.pre-commit-config.yaml
