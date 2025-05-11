@@ -1,5 +1,5 @@
 ---
-name: github-ansible-lint
+name: ansible-lint
 run-name: "${{ github.actor }} has triggered the ${{ github.workflow }} workflow"
 on:
   pull_request:
@@ -10,53 +10,19 @@ on:
       - opened
       - reopened
       - edited
-  workflow_call:
-    inputs:
-      ansible_requirements_file:
-        description: 'ansible requirements file for role and collection dependencies'
-        required: false
-        default: 'ansible/requirements.yml'
-        type: string
-      ansible_directory:
-        description: 'relative path to ansible directory'
-        required: false
-        default: 'ansible'
-        type: string
-      ansible_lint_config:
-        description: 'relative path to ansible lint config file'
-        required: false
-        default: '.ansible-lint.yaml'
-        type: string
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}  # This is the concurrency group name and should be unique per pull request
   cancel-in-progress: ${{ !contains(github.ref, 'release/')}}  # Cancel previous runs if a new run is triggered on a non-release branch
-env:
-  ANSIBLE_LINT_CONFIG: ${{ inputs.ansible_lint_config || '.ansible-lint.yaml' }}
-  ANSIBLE_REQUIREMENTS_FILE: ${{ inputs.ansible_requirements_file || 'requirements.yml' }}
-  ANSIBLE_DIRECTORY: ${{ inputs.ansible_directory || 'ansible' }}
+permissions:
+  contents: read
+  pull-requests: write
 jobs:
-  github-ansible-lint:
-    permissions:
-      contents: read
-      pull-requests: write
+  ansible-lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+      - name: Run YAML Linters
+        id: ansible-lint
+        uses: nkbinnovations/reusable-actions/.github/actions/ansible-lint@v1
         with:
-          fetch-depth: 1
-      - name: Ansible Lint Config Setup
-        id: ansible-lint-config
-        run: |-
-          if [ ! -f "${{ env.ANSIBLE_LINT_CONFIG }}" ]; then
-            curl -sSL -o ${{ env.ANSIBLE_LINT_CONFIG }} https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/${{ env.ANSIBLE_LINT_CONFIG }}
-          fi
-          if [ ! -f "${{ env.ANSIBLE_REQUIREMENTS_FILE }}" ]; then
-            curl -sSL -o ${{ env.ANSIBLE_REQUIREMENTS_FILE }} https://raw.githubusercontent.com/nkbinnovations/reusable-workflows/refs/heads/main/${{ env.ANSIBLE_REQUIREMENTS_FILE }}
-          fi
-      - name: Run ansible-lint
-        uses: ansible/ansible-lint@e918e02374cc9148abfe6d0fa04417ee89f0def9  # v25
-        with:
-          setup_python: "true"
-          working_directory: "${{ github.workspace }}/${{ env.ANSIBLE_DIRECTORY }}"
-          requirements_file: "${{ env.ANSIBLE_REQUIREMENTS_FILE }}"
+          python_version: '3.13.0'
+          ansible_directory: 'ansible'
