@@ -27,4 +27,3 @@ jobs:
         uses: nkbinnovations/reusable-actions/.github/actions/labeler@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          labeler_config: ${{ github.workspace }}/.github/actions/labeler/labeler.yaml
